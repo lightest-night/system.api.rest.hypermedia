@@ -2,6 +2,7 @@
 {
     public class TestReadModel
     {
-        public string? Property { get; set; }
+        public string? StringProperty { get; set; }
+        public int IntProperty { get; set; }
     }
 }

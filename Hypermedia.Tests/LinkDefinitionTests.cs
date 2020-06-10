@@ -15,7 +15,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
         private readonly object _value = new {Value = "Value"};
 
         private readonly Expression<Func<TestReadModel, object>> _valueExpression =
-            readModel => new {readModel.Property};
+            readModel => new {Property = readModel.StringProperty};
         
         [Fact]
         public void ShouldCreateLinkDefinitionValueObjectWithoutRoot()
@@ -84,9 +84,9 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
             var linkDefinition = new LinkDefinition<TestReadModel>(Action, Relation, _method, _valueExpression);
             var readModel = new TestReadModel
             {
-                Property = "Test Property"
+                StringProperty = "Test Property"
             };
-            var expectedObject = new {readModel.Property}.ToExpectedObject();
+            var expectedObject = new {Property = readModel.StringProperty}.ToExpectedObject();
             
             // Act
             var result = linkDefinition.ValueExpression.Compile()(readModel);
