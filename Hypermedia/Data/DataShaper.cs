@@ -66,6 +66,9 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Data
             foreach (var property in requestedProperties)
             {
                 var objectPropertyValue = property.GetValue(entity);
+                if (objectPropertyValue == null)
+                    continue;
+                
                 shapedObject.Entity.TryAdd(property.Name, objectPropertyValue);
             }
 

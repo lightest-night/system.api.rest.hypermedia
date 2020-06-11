@@ -37,7 +37,6 @@ namespace LightestNight.System.Api.Rest.Hypermedia
         /// <param name="href">The target URI of this Link</param>
         /// <param name="relation">Link relation type, describes how the current context is related to the target resource</param>
         /// <param name="method">The HTTP Method the current context accepts</param>
-        [SuppressMessage("ReSharper", "CA1308")]
         public Link(string href, string relation, HttpMethod method)
         {
             Href = href.ThrowIfNull(nameof(href)).ToLowerInvariant();

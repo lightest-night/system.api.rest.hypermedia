@@ -12,8 +12,10 @@ namespace LightestNight.System.Api.Rest.Hypermedia
 {
     public class HypermediaControllerBase : ControllerBase
     {
+        #nullable enable
         private LinkGenerator? _linkGenerator;
-    
+        #nullable restore
+        
         public LinkGenerator LinkGenerator
         {
             get

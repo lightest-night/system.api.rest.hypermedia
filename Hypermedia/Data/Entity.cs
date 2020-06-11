@@ -12,7 +12,6 @@ using LightestNight.System.Utilities.Extensions;
 
 namespace LightestNight.System.Api.Rest.Hypermedia.Data
 {
-    [SuppressMessage("Rider", "CA1710")]
     public class Entity : DynamicObject, IXmlSerializable, IDictionary<string, object>
     {
         private readonly IDictionary<string, object> _expando;
@@ -49,22 +48,23 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Data
         public bool Remove(string key)
             => _expando.Remove(key);
 
-        public bool TryGetValue(string key, out object value)
-            => _expando.TryGetValue(key, out value);
+        public bool TryAdd(string key, object value)
+            => _expando.TryAdd(key, value);
 
-        [SuppressMessage("Rider", "CA1062")]
+        public bool TryGetValue(string key, out object value)
+            => _expando.TryGetValue(key, out value!);
+
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             binder.ThrowIfNull(nameof(binder));
             
-            if (!_expando.TryGetValue(binder.Name, out object value)) 
+            if (!_expando.TryGetValue(binder.Name, out var value)) 
                 return base.TryGetMember(binder, out result);
             
             result = value;
             return true;
         }
 
-        [SuppressMessage("Rider", "CA1062")]
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
             binder.ThrowIfNull(nameof(binder));
@@ -72,7 +72,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Data
             _expando[binder.Name] = value;
             return true;
         }
-
+        
         public XmlSchema GetSchema()
         {
             throw new NotImplementedException();

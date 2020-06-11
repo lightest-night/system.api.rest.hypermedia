@@ -19,20 +19,30 @@ namespace LightestNight.System.Api.Rest.Hypermedia
         private static readonly IDictionary<Type, ICollection> ResourceLinkDefinitions =
             GetLinkDefinitions(nameof(ControllerMap<object, object>.ResourceLinkDefinitions));
 
-        private static object[] Maps
+        private static IEnumerable<object> Maps
         {
             get
             {
                 var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-                return assemblies.Where(assembly => !assembly.IsDynamic)
+                var nullableMaps = assemblies.Where(assembly => !assembly.IsDynamic)
                     .SelectMany(assembly => assembly.GetExportedTypes())
                     .Where(mapType =>
                         mapType.IsClass && !mapType.IsAbstract && mapType.BaseType != null &&
                         mapType.BaseType.IsGenericType &&
                         mapType.BaseType.GetGenericTypeDefinition() == typeof(ControllerMap<,>))
                     .Select(Activator.CreateInstance)
-                    .Where(instance => instance != null)
                     .ToArray();
+
+                var maps = new List<object>();
+                foreach (var map in nullableMaps)
+                {
+                    if (map == null)
+                        continue;
+                    
+                    maps.Add(map);
+                }
+
+                return maps;
             }
         }
         
@@ -74,10 +84,10 @@ namespace LightestNight.System.Api.Rest.Hypermedia
                         null, valueExpression, null, CultureInfo.InvariantCulture);
 
                     var valueExpressionResult = funcType.InvokeMember(nameof(Func<object>.Invoke),
-                        invocationBindingFlags, null, func, new object[] {value}, CultureInfo.InvariantCulture);
+                        invocationBindingFlags, null, func, new[] {value}, CultureInfo.InvariantCulture);
 
                     result.Add(new LinkDefinition(action?.ToString()!, relation?.ToString()!, (HttpMethod) method!,
-                        valueExpressionResult, (bool) isRootForResource!));
+                        valueExpressionResult!, (bool) isRootForResource!));
                 }
             }
 
@@ -129,11 +139,14 @@ namespace LightestNight.System.Api.Rest.Hypermedia
 
         private static Dictionary<Type, ICollection> GetLinkDefinitions(string propertyName)
         {
-            var controllerTypes = Maps.ToDictionary(map => map.GetType().BaseType.GenericTypeArguments[0]);
+            var controllerTypes = Maps.ToDictionary(map => map.GetType().BaseType?.GenericTypeArguments[0]);
 
             var result = new Dictionary<Type, ICollection>();
             foreach (var (key, value) in controllerTypes)
             {
+                if (key == null)
+                    continue;
+                
                 var mapType = value.GetType();
                 var readModelType = mapType.BaseType?.GenericTypeArguments[1];
                 if (readModelType == null)
