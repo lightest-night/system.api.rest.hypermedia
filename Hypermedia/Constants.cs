@@ -21,5 +21,10 @@
         /// The key to store links under
         /// </summary>
         public const string LinksKey = "Links";
+
+        /// <summary>
+        /// The JSON Media Type
+        /// </summary>
+        public const string JsonMediaType = "application/json";
     }
 }
