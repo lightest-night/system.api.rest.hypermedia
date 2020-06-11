@@ -8,7 +8,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia
         /// <summary>
         /// A Collection of <typeparamref name="TResource" /> objects
         /// </summary>
-        public List<TResource> Value { get; set; }
+        public List<TResource> Value { get; }
 
         /// <summary>
         /// Creates a new instance of <see cref="LinkCollection{TResource}" />

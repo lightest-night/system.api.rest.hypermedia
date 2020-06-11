@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Http;
 using System.Reflection;
+using LightestNight.System.Utilities.Extensions;
 
 namespace LightestNight.System.Api.Rest.Hypermedia
 {
@@ -50,6 +51,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia
         {
             const BindingFlags invocationBindingFlags = BindingFlags.InvokeMethod | PropertyBindingFlags;
 
+            value.ThrowIfNull(nameof(value));
             var valueType = value.GetType();
             var linkDefs = EntityLinkDefinitions[controllerType];
             var linkDefType = typeof(LinkDefinition<>).MakeGenericType(valueType);

@@ -7,7 +7,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia
         /// <summary>
         /// The collection of Links associated with the Resource
         /// </summary>
-        public List<Link> Links { get; set; } = new List<Link>();
+        public List<Link> Links { get; } = new List<Link>();
 
     }
 }

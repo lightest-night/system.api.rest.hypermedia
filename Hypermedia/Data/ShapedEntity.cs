@@ -5,7 +5,7 @@
         /// <summary>
         /// The <see cref="Entity" /> to shape
         /// </summary>
-        public Entity Entity { get; set; }
+        public Entity Entity { get; }
         
         /// <summary>
         /// The original object that was then shaped
