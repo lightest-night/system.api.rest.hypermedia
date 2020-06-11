@@ -7,23 +7,23 @@ using Xunit;
 
 namespace LightestNight.System.Api.Rest.Hypermedia.Tests
 {
-    public class TestController {}
-    
-    public class TestControllerMap : ControllerMap<TestController, TestReadModel>
-    {
-        public TestControllerMap()
-        {
-            Expression<Func<TestReadModel, object>> valueExpression = readModel => new {Property = readModel.StringProperty};
-            CreateLinkDefinition("GET", valueExpression, "self", HttpMethod.Get);
-            CreateLinkDefinition("GetById", valueExpression, "self", HttpMethod.Get, true);
-            CreateLinkDefinition("GetByIdAgain", valueExpression, "self", HttpMethod.Get, true);
-
-            CreateLinkDefinition("GetById", "self", HttpMethod.Get);
-        }
-    }
-    
     public class ControllerMapTests
     {
+        private class TestController {}
+    
+        private class TestControllerMap : ControllerMap<TestController, TestReadModel>
+        {
+            public TestControllerMap()
+            {
+                Expression<Func<TestReadModel, object>> valueExpression = readModel => new {Property = readModel.StringProperty};
+                CreateLinkDefinition("GET", valueExpression, "self", HttpMethod.Get);
+                CreateLinkDefinition("GetById", valueExpression, "self", HttpMethod.Get, true);
+                CreateLinkDefinition("GetByIdAgain", valueExpression, "self", HttpMethod.Get, true);
+
+                CreateLinkDefinition("GetById", "self", HttpMethod.Get);
+            }
+        }
+        
         private readonly TestControllerMap _sut;
     
         public ControllerMapTests()
