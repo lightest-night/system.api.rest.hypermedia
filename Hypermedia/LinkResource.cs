@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+#pragma warning disable 1591
+
 namespace LightestNight.System.Api.Rest.Hypermedia
 {
     public class LinkResource

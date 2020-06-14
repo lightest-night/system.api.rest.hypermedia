@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Net.Http.Headers;
 
+#pragma warning disable 1591
+
 namespace LightestNight.System.Api.Rest.Hypermedia
 {
     public class ValidateMediaTypeAttribute : ActionFilterAttribute

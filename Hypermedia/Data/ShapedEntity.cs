@@ -1,4 +1,6 @@
-﻿namespace LightestNight.System.Api.Rest.Hypermedia.Data
+﻿#pragma warning disable 1591
+
+namespace LightestNight.System.Api.Rest.Hypermedia.Data
 {
     public class ShapedEntity
     {

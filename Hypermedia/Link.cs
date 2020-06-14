@@ -1,6 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Net.Http;
+﻿using System.Net.Http;
 using LightestNight.System.Utilities.Extensions;
+
+#pragma warning disable 1591
 
 namespace LightestNight.System.Api.Rest.Hypermedia
 {

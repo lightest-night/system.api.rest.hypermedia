@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using LightestNight.System.Utilities.Extensions;
+#pragma warning disable 1591
 
 namespace LightestNight.System.Api.Rest.Hypermedia.Data
 {

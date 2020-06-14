@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Http;
+#pragma warning disable 1591
 
 namespace LightestNight.System.Api.Rest.Hypermedia
 {
@@ -20,13 +21,13 @@ namespace LightestNight.System.Api.Rest.Hypermedia
         }
 
         /// <summary>
-        /// The collection of <see cref="LinkDefinition{TReadModel}" /> objects by <typeparam name="TController"></typeparam>
+        /// The collection of <see cref="LinkDefinition{TReadModel}" /> objects by Controller Type
         /// </summary>
         public IDictionary<Type, LinkDefinition<TReadModel>[]> EntityLinkDefinitions
             => _entityLinkDefinitions.ToDictionary(key => key.Key, value => value.Value.ToArray());
 
         /// <summary>
-        /// The collection of <see cref="LinkDefinition" /> objects by <typeparam name="TController"></typeparam>
+        /// The collection of <see cref="LinkDefinition" /> objects by Controller Type
         /// </summary>
         public IDictionary<Type, LinkDefinition[]> ResourceLinkDefinitions
             => _resourceLinkDefinitions.ToDictionary(key => key.Key, value => value.Value.ToArray());

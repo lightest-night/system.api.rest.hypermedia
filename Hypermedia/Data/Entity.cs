@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using LightestNight.System.Utilities.Extensions;
+#pragma warning disable 1591
 
 namespace LightestNight.System.Api.Rest.Hypermedia.Data
 {

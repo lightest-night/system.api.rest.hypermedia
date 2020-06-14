@@ -8,6 +8,8 @@ using System.Net.Http;
 using System.Reflection;
 using LightestNight.System.Utilities.Extensions;
 
+#pragma warning disable 1591
+
 namespace LightestNight.System.Api.Rest.Hypermedia
 {
     public static class LinkDefinitions

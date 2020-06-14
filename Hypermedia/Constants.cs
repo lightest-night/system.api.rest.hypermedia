@@ -1,4 +1,6 @@
-﻿namespace LightestNight.System.Api.Rest.Hypermedia
+﻿#pragma warning disable 1591
+
+namespace LightestNight.System.Api.Rest.Hypermedia
 {
     public static class Constants
     {

@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
 
+#pragma warning disable 1591
+
 namespace LightestNight.System.Api.Rest.Hypermedia
 {
     public class HypermediaControllerBase : ControllerBase
