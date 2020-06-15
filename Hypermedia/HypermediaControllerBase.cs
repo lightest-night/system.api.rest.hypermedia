@@ -17,8 +17,8 @@ namespace LightestNight.System.Api.Rest.Hypermedia
         #nullable enable
         private LinkGenerator? _linkGenerator;
         #nullable restore
-        
-        public LinkGenerator LinkGenerator
+
+        private LinkGenerator LinkGenerator
         {
             get
             {
@@ -34,6 +34,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia
             set => _linkGenerator = value.ThrowIfNull(nameof(value));
         }
     
+        [NonAction]
         public virtual CreatedResult Created(object value)
         {
             var entityLinkDefs = LinkDefinitions.GetEntityLinkDefinitions(GetType(), value).ToArray();
@@ -78,6 +79,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia
             return base.Ok(shapedEntity);
         }
 
+        [NonAction]
         public OkObjectResult Ok(IEnumerable<object> value)
         {
             var controllerType = GetType();
