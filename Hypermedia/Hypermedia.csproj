@@ -23,6 +23,7 @@
         <InformationalVersion>1.0.0</InformationalVersion>
         <PackageIcon>icon.jpeg</PackageIcon>
         <RepositoryUrl>https://github.com/lightestnight/system.api.rest.hypermedia</RepositoryUrl>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -47,4 +48,7 @@
         </None>
     </ItemGroup>
 
+    <ItemGroup>
+        <None Include="..\LICENSE" Pack="true" PackagePath="" />
+    </ItemGroup>
 </Project>
