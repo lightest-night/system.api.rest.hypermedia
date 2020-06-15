@@ -52,6 +52,9 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Data
 
         public bool TryGetValue(string key, out object value)
             => _expando.TryGetValue(key, out value!);
+        
+        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+            => _expando.GetEnumerator();
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
@@ -89,11 +92,6 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Data
                 var value = _expando[key];
                 WriteXmlElement(key, value, writer);   
             }
-        }
-
-        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
-        {
-            throw new NotImplementedException();
         }
 
         public void Add(KeyValuePair<string, object> item)
