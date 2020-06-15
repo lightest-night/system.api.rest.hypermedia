@@ -5,6 +5,24 @@
         <AssemblyName>LightestNight.System.Api.Rest.Hypermedia</AssemblyName>
         <RootNamespace>LightestNight.System.Api.Rest.Hypermedia</RootNamespace>
         <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+        <IsPackable>true</IsPackable>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageId>LightestNight.System.Api.Rest.Hypermedia</PackageId>
+        <Authors>James Woodley</Authors>
+        <Company>LightestNight Ltd</Company>
+        <Title>LightestNight :: System :: Api :: REST :: Hypermedia</Title>
+        <Description>Functions, Utilities and Helpers that enable the use of Hypermedia as the Engine of Application State (HATEOAS).</Description>
+        <PackageTags>lightestnight;system;infrastructure;api;REST;RESTful;HATEOAS;Hypermedia;Hypermedia as the Engine of Application State</PackageTags>
+        <Version>1.0.0</Version>
+        <PackageVersion>1.0.0</PackageVersion>
+        <AssemblyVersion>1.0.0</AssemblyVersion>
+        <FileVersion>1.0.0</FileVersion>
+        <InformationalVersion>1.0.0</InformationalVersion>
+        <PackageIcon>icon.jpeg</PackageIcon>
+        <RepositoryUrl>https://github.com/lightestnight/system.api.rest.hypermedia</RepositoryUrl>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -20,6 +38,13 @@
       <PackageReference Include="LightestNight.System.Utilities" Version="1.8.5" />
       <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
       <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.5" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\icon.jpeg">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+        </None>
     </ItemGroup>
 
 </Project>
