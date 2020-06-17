@@ -7,6 +7,9 @@ using Newtonsoft.Json.Serialization;
 
 namespace LightestNight.System.Api.Rest.Hypermedia
 {
+    /// <summary>
+    /// Adds the necessary services to the standard IoC container to include Hypermedia in your Web Api
+    /// </summary>
     public static class ExtendsServiceCollection
     {
         /// <summary>
