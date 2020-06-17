@@ -1,10 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
-
-#pragma warning disable 1591
 
 namespace LightestNight.System.Api.Rest.Hypermedia
 {
@@ -15,11 +14,15 @@ namespace LightestNight.System.Api.Rest.Hypermedia
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection" /> to register into</param>
         /// <param name="vendorName">The custom vendor name to accept</param>
+        /// <param name="optionsAccessor">An action to generate an <see cref="MvcOptions" /> object to configure Mvc with</param>
         /// <returns>A populated <see cref="IServiceCollection" /></returns>
-        public static IServiceCollection AddHypermedia(this IServiceCollection services, string vendorName)
+        public static IServiceCollection AddHypermedia(this IServiceCollection services, string vendorName, Action<MvcOptions>? optionsAccessor = null)
         {
-            services.AddControllers(options => options.Filters.Add(typeof(ValidateMediaTypeAttribute)))
-                .AddXmlSerializerFormatters()
+            services.AddControllers(options =>
+                {
+                    optionsAccessor?.Invoke(options);
+                    options.Filters.Add(typeof(ValidateMediaTypeAttribute));
+                }).AddXmlSerializerFormatters()
                 .AddNewtonsoftJson(options =>
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver());
 
