@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using ExpectedObjects;
+﻿using System.Linq;
 using LightestNight.System.Api.Rest.Hypermedia.Data;
 using Shouldly;
 using Xunit;
@@ -27,7 +25,6 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests.Data
             
             // Assert
             result.Entity.Count.ShouldBe(0);
-            result.Original.ShouldBeNull();
         }
     
         [Fact]
@@ -47,19 +44,6 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests.Data
             result.Entity.ShouldNotBeNull();
             result.Entity[nameof(TestReadModel.StringProperty)].ShouldBe(testObject.StringProperty);
             result.Entity[nameof(TestReadModel.IntProperty)].ShouldBe(testObject.IntProperty);
-        }
-
-        [Fact]
-        public void ShouldKeepOriginalValue()
-        {
-            // Arrange
-            var testObject = new TestReadModel().ToExpectedObject();
-            
-            // Act
-            var result = _sut.ShapeData(testObject);
-            
-            // Assert
-            result.Original.ShouldBe(testObject);
         }
 
         [Fact]
@@ -124,25 +108,6 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests.Data
                 result.Entity[nameof(TestReadModel.StringProperty)].ShouldBe(testObject.StringProperty);
                 result.Entity[nameof(TestReadModel.BoolProperty)].ShouldBe(testObject.BoolProperty);
             }
-        }
-
-        [Fact]
-        public void ShouldKeepOriginalValues()
-        {
-            // Arrange
-            var testObjects = Enumerable.Range(0, 10).Select(index => new TestReadModel
-            {
-                StringProperty = $"Test Property {index}",
-                IntProperty = index,
-                BoolProperty = index % 2 == 0
-            }).ToArray();
-            
-            // Act
-            var results = _sut.ShapeData(testObjects).ToArray();
-            
-            // Assert
-            foreach (var result in results)
-                testObjects.ShouldContain(result.Original);
         }
 
         [Fact]

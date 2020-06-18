@@ -73,8 +73,6 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Data
                 shapedObject.Entity.TryAdd(property.Name, objectPropertyValue);
             }
 
-            shapedObject.Original = entity;
-
             return shapedObject;
         }
     }

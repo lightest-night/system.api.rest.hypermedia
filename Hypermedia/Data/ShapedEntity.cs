@@ -10,13 +10,6 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Data
         public Entity Entity { get; }
         
         /// <summary>
-        /// The original object that was then shaped
-        /// </summary>
-        #nullable enable
-        public object? Original { get; set; }
-        #nullable restore
-
-        /// <summary>
         /// Creates a new instance of <see cref="ShapedEntity" />
         /// </summary>
         public ShapedEntity()

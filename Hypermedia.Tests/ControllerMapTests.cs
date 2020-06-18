@@ -11,11 +11,11 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
     {
         private class TestController {}
     
-        private class TestControllerMap : ControllerMap<TestController, TestReadModel>
+        private class TestControllerMap : ControllerMap<TestController>
         {
             public TestControllerMap()
             {
-                Expression<Func<TestReadModel, object>> valueExpression = readModel => new {Property = readModel.StringProperty};
+                Expression<Func<object, object>> valueExpression = readModel => new {Property = ((TestReadModel)readModel).StringProperty};
                 CreateLinkDefinition("GET", valueExpression, "self", HttpMethod.Get);
                 CreateLinkDefinition("GetById", valueExpression, "self", HttpMethod.Get, true);
                 CreateLinkDefinition("GetByIdAgain", valueExpression, "self", HttpMethod.Get, true);
