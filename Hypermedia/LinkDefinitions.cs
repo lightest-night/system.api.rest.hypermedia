@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Net.Http;
 using System.Reflection;
 
 #pragma warning disable 1591
@@ -69,25 +67,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia
                 if (!(linkDefCollection is IEnumerable linkDefEnumerable))
                     continue;
 
-                foreach (var linkDef in linkDefEnumerable)
-                {
-                    if (linkDef == null || linkDef.GetType() != linkDefType)
-                        continue;
-
-                    var action = linkDefType.GetProperty(nameof(LinkDefinition.Action), PropertyBindingFlags)
-                        ?.GetValue(linkDef);
-                    var relation = linkDefType.GetProperty(nameof(LinkDefinition.Relation), PropertyBindingFlags)
-                        ?.GetValue(linkDef);
-                    var method = linkDefType.GetProperty(nameof(LinkDefinition.Method), PropertyBindingFlags)
-                        ?.GetValue(linkDef);
-                    var valueExpression = linkDefType.GetProperty(nameof(LinkDefinition.ValueExpression), PropertyBindingFlags)
-                        ?.GetValue(linkDef);
-                    var isRootForResource = linkDefType
-                        .GetProperty(nameof(LinkDefinition.IsRootForResource), PropertyBindingFlags)?.GetValue(linkDef);
-
-                    result.Add(new LinkDefinition(action?.ToString()!, relation?.ToString()!, (HttpMethod) method!,
-                        (Expression<Func<object, object>>) valueExpression!, (bool) isRootForResource!));
-                }
+                result.AddRange(linkDefEnumerable.Cast<object?>().Where(linkDef => linkDef != null && linkDef.GetType() == linkDefType).Cast<LinkDefinition>());
             }
 
             var rootForResource = result.FirstOrDefault(link => link.IsRootForResource) ?? result.FirstOrDefault(link =>

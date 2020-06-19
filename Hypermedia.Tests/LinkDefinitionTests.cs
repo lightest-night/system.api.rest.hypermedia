@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq.Expressions;
 using System.Net.Http;
 using ExpectedObjects;
 using Shouldly;
@@ -13,20 +12,21 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
         private const string Relation = "Relation";
         private readonly HttpMethod _method = HttpMethod.Get;
 
-        private readonly Expression<Func<object, object>> _valueExpression =
-            readModel => new {Property = ((TestReadModel)readModel).StringProperty};
+        private static readonly Func<TestReadModel, object> ValueFunc =
+            readModel => new {Property = readModel.StringProperty};
+
+        private static readonly Func<object, object> ValueAccessor = ValueFunc.Downcast();
         
         [Fact]
         public void ShouldCreateLinkDefinitionValueExpressionWithoutRoot()
         {
             // Act
-            var result = new LinkDefinition(Action, Relation, _method, _valueExpression);
+            var result = new LinkDefinition(Action, Relation, _method, ValueAccessor);
             
             // Assert
             result.Action.ShouldBe(Action);
             result.Relation.ShouldBe(Relation);
             result.Method.ShouldBe(_method);
-            result.ValueExpression.ShouldBe(_valueExpression);
             result.IsRootForResource.ShouldBeFalse();
         }
 
@@ -36,13 +36,12 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
         public void ShouldCreateLinkDefinitionValueExpressionWithRoot(bool isRoot)
         {
             // Act
-            var result = new LinkDefinition(Action, Relation, _method, _valueExpression, isRoot);
+            var result = new LinkDefinition(Action, Relation, _method, ValueAccessor, isRoot);
             
             // Assert
             result.Action.ShouldBe(Action);
             result.Relation.ShouldBe(Relation);
             result.Method.ShouldBe(_method);
-            result.ValueExpression.ShouldBe(_valueExpression);
             result.IsRootForResource.ShouldBe(isRoot);
         }
 
@@ -50,7 +49,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
         public void ShouldResolveValueExpressionCorrectly()
         {
             // Arrange
-            var linkDefinition = new LinkDefinition(Action, Relation, _method, _valueExpression);
+            var linkDefinition = new LinkDefinition(Action, Relation, _method, ValueAccessor);
             var readModel = new TestReadModel
             {
                 StringProperty = "Test Property"
@@ -58,7 +57,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
             var expectedObject = new {Property = readModel.StringProperty}.ToExpectedObject();
             
             // Act
-            var result = linkDefinition.ValueExpression.Compile()(readModel);
+            var result = linkDefinition.GetValueMap(readModel);
             
             // Assert
             result.ShouldBe(expectedObject);

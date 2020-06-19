@@ -6,7 +6,6 @@ using LightestNight.System.Utilities.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Net.Http.Headers;
 
 #pragma warning disable 1591
 
@@ -40,18 +39,15 @@ namespace LightestNight.System.Api.Rest.Hypermedia
             if (rootForResource == null)
                 throw new InvalidOperationException("No link has been defined as root for this resource");
 
-            var rootValues = rootForResource.ValueExpression.Compile()(value);
-            var location = new Uri(LinkGenerator.GetUriByAction(HttpContext, rootForResource.Action, values: rootValues)
-                .ToLowerInvariant());
+            var rootValues = rootForResource.GetValueMap(value);
+            var location = new Uri(LinkGenerator.GetUriByAction(HttpContext, rootForResource.Action, values: rootValues).ToLowerInvariant());
 
-            var mediaType = (MediaTypeHeaderValue) HttpContext.Items[Constants.AcceptHeaderMediaType];
-            if (!mediaType.SubTypeWithoutSuffix.EndsWith(Constants.HateoasIdentifier,
-                StringComparison.InvariantCultureIgnoreCase))
+            if (!HttpContext.IsHateoas())
                 return base.Created(location, value);
 
             var links = entityLinkDefs.Select(linkDef =>
             {
-                var linkValues = linkDef.ValueExpression.Compile()(value);
+                var linkValues = linkDef.GetValueMap(value);
                 return new Link(LinkGenerator.GetUriByAction(HttpContext, linkDef.Action, values: linkValues),
                     linkDef.Relation, linkDef.Method);
             });
@@ -64,15 +60,13 @@ namespace LightestNight.System.Api.Rest.Hypermedia
 
         public override OkObjectResult Ok(object value)
         {
-            var mediaType = (MediaTypeHeaderValue) HttpContext.Items[Constants.AcceptHeaderMediaType];
-            if (!mediaType.SubTypeWithoutSuffix.EndsWith(Constants.HateoasIdentifier,
-                StringComparison.InvariantCultureIgnoreCase))
+            if (!HttpContext.IsHateoas())
                 return base.Ok(value);
 
             var entityLinkDefs = LinkDefinitions.GetEntityLinkDefinitions(GetType());
             var links = entityLinkDefs.Select(linkDef =>
             {
-                var linkValues = linkDef.ValueExpression.Compile()(value);
+                var linkValues = linkDef.GetValueMap(value);
                 return new Link(LinkGenerator.GetUriByAction(HttpContext, linkDef.Action, values: linkValues),
                     linkDef.Relation, linkDef.Method);
             });
@@ -86,23 +80,21 @@ namespace LightestNight.System.Api.Rest.Hypermedia
         [NonAction]
         public OkObjectResult Ok(IEnumerable<object> value)
         {
-            var valueArray = value as object[] ?? value.ToArray();
-            var mediaType = (MediaTypeHeaderValue) HttpContext.Items[Constants.AcceptHeaderMediaType];
-            if (!mediaType.SubTypeWithoutSuffix.EndsWith(Constants.HateoasIdentifier,
-                StringComparison.InvariantCultureIgnoreCase))
+            if (!HttpContext.IsHateoas())
                 return base.Ok(value);
 
+            var valueArray = value as object[] ?? value.ToArray();
             var shapedValues = _dataShaper.ShapeData(valueArray).ToArray();
-            var shapedEntities = shapedValues.Select(entity => entity.Entity).ToList();
+            var shapedEntities = shapedValues.Select(entity => entity.Entity).ToArray();
             var controllerType = GetType();
-            
+
             for (var index = 0; index < shapedValues.Length; index++)
             {
                 var shapedValue = shapedValues[index];
                 var entityLinkDefs = LinkDefinitions.GetEntityLinkDefinitions(controllerType);
                 var links = entityLinkDefs.Select(linkDef =>
                 {
-                    var linkValues = linkDef.ValueExpression.Compile()(shapedValue);
+                    var linkValues = linkDef.GetValueMap(shapedValue);
                     return new Link(LinkGenerator.GetUriByAction(HttpContext, linkDef.Action, values: linkValues),
                         linkDef.Relation, linkDef.Method);
                 });

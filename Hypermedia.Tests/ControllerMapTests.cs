@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net.Http;
 using Shouldly;
 using Xunit;
@@ -15,10 +14,10 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
         {
             public TestControllerMap()
             {
-                Expression<Func<object, object>> valueExpression = readModel => new {Property = ((TestReadModel)readModel).StringProperty};
-                CreateLinkDefinition("GET", valueExpression, "self", HttpMethod.Get);
-                CreateLinkDefinition("GetById", valueExpression, "self", HttpMethod.Get, true);
-                CreateLinkDefinition("GetByIdAgain", valueExpression, "self", HttpMethod.Get, true);
+                static object ValueFunc(TestReadModel readModel) => new {Property = readModel.StringProperty};
+                CreateLinkDefinition("GET", (Func<TestReadModel, object>) ValueFunc, "self", HttpMethod.Get);
+                CreateLinkDefinition("GetById", (Func<TestReadModel, object>) ValueFunc, "self", HttpMethod.Get, true);
+                CreateLinkDefinition("GetByIdAgain", (Func<TestReadModel, object>) ValueFunc, "self", HttpMethod.Get, true);
 
                 CreateLinkDefinition("GetById", "self", HttpMethod.Get);
             }

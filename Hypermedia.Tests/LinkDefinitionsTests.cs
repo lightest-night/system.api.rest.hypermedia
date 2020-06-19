@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net.Http;
 using ExpectedObjects;
 using Shouldly;
@@ -17,9 +16,9 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
     {
         public LinkDefinitionsTestControllerMap()
         {
-            Expression<Func<object, object>> valueExpression = readModel => new {Property = ((TestReadModel)readModel).StringProperty};
-            CreateLinkDefinition("GET", valueExpression, "self", HttpMethod.Get);
-            CreateLinkDefinition("GetById", valueExpression, "self", HttpMethod.Get, true);
+            static object ValueFunc(TestReadModel readModel) => new {Property = readModel.StringProperty};
+            CreateLinkDefinition("GET", (Func<TestReadModel, object>) ValueFunc, "self", HttpMethod.Get);
+            CreateLinkDefinition("GetById", (Func<TestReadModel, object>) ValueFunc, "self", HttpMethod.Get, true);
             
             CreateLinkDefinition("GetById", "self", HttpMethod.Get);
         }
@@ -29,9 +28,9 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
     {
         public LinkDefinitionsNoRootTestControllerMap()
         {
-            Expression<Func<object, object>> valueExpression = readModel => new {Property = ((TestReadModel)readModel).StringProperty};
-            CreateLinkDefinition("GET", valueExpression, "self", HttpMethod.Get);
-            CreateLinkDefinition("GetById", valueExpression, "self", HttpMethod.Get);
+            static object ValueFunc(TestReadModel readModel) => new {Property = readModel.StringProperty};
+            CreateLinkDefinition("GET", (Func<TestReadModel, object>) ValueFunc, "self", HttpMethod.Get);
+            CreateLinkDefinition("GetById", (Func<TestReadModel, object>) ValueFunc, "self", HttpMethod.Get);
             
             CreateLinkDefinition("GetById", "self", HttpMethod.Get);
         }
@@ -41,9 +40,9 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
     {
         public LinkDefinitionsNoRootNoDefaultTestControllerMap()
         {
-            Expression<Func<object, object>> valueExpression = readModel => new {Property = ((TestReadModel)readModel).StringProperty};
-            CreateLinkDefinition("GET", valueExpression, "self", HttpMethod.Get);
-            CreateLinkDefinition("Create", valueExpression, "self", HttpMethod.Post);
+            static object ValueFunc(TestReadModel readModel) => new {Property = readModel.StringProperty};
+            CreateLinkDefinition("GET", (Func<TestReadModel, object>) ValueFunc, "self", HttpMethod.Get);
+            CreateLinkDefinition("Create", (Func<TestReadModel, object>) ValueFunc, "self", HttpMethod.Post);
             
             CreateLinkDefinition("GetById", "self", HttpMethod.Get);
         }
@@ -65,9 +64,9 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
             
             // Assert
             result.ShouldContain(linkDef => linkDef.Action == "GET" && linkDef.Method == HttpMethod.Get && linkDef.Relation == "self" &&
-                                            expectedValue.Equals(linkDef.ValueExpression.Compile()(_value)));
+                                            expectedValue.Equals(linkDef.GetValueMap(_value)));
             result.ShouldContain(linkDef => linkDef.Action == "GetById" && linkDef.Method == HttpMethod.Get && linkDef.Relation == "self" &&
-                                            expectedValue.Equals(linkDef.ValueExpression.Compile()(_value)) && linkDef.IsRootForResource);
+                                            expectedValue.Equals(linkDef.GetValueMap(_value)) && linkDef.IsRootForResource);
         }
 
         [Fact]
@@ -83,13 +82,13 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
             // Assert
             result.ShouldContain(linkDef =>
                 linkDef.Action == Constants.DefaultRootForResourceAction && linkDef.Method == HttpMethod.Get &&
-                linkDef.Relation == "self" && expectedValue.Equals(linkDef.ValueExpression.Compile()(_value)) && linkDef.IsRootForResource);
+                linkDef.Relation == "self" && expectedValue.Equals(linkDef.GetValueMap(_value)) && linkDef.IsRootForResource);
             result.ShouldNotContain(linkDef =>
                 linkDef.Action == Constants.DefaultRootForResourceAction && linkDef.Method == HttpMethod.Get &&
-                linkDef.Relation == "self" && expectedValue.Equals(linkDef.ValueExpression.Compile()(_value)) && !linkDef.IsRootForResource);
+                linkDef.Relation == "self" && expectedValue.Equals(linkDef.GetValueMap(_value)) && !linkDef.IsRootForResource);
             result.ShouldContain(linkDef =>
                 linkDef.Action == "GET" && linkDef.Method == HttpMethod.Get && linkDef.Relation == "self" &&
-                expectedValue.Equals(linkDef.ValueExpression.Compile()(_value)) && !linkDef.IsRootForResource);
+                expectedValue.Equals(linkDef.GetValueMap(_value)) && !linkDef.IsRootForResource);
         }
 
         [Fact]
@@ -124,10 +123,10 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
                 var expectedValue = new {Property = testObject.StringProperty}.ToExpectedObject();
                 result.ShouldContain(linkDef =>
                     linkDef.Action == "GET" && linkDef.Method == HttpMethod.Get && linkDef.Relation == "self" &&
-                    expectedValue.Equals(linkDef.ValueExpression.Compile()(testObject)) && !linkDef.IsRootForResource);
+                    expectedValue.Equals(linkDef.GetValueMap(testObject)) && !linkDef.IsRootForResource);
                 result.ShouldContain(linkDef =>
                     linkDef.Action == "GetById" && linkDef.Method == HttpMethod.Get && linkDef.Relation == "self" &&
-                    expectedValue.Equals(linkDef.ValueExpression.Compile()(testObject)) && linkDef.IsRootForResource);
+                    expectedValue.Equals(linkDef.GetValueMap(testObject)) && linkDef.IsRootForResource);
             }
         }
 

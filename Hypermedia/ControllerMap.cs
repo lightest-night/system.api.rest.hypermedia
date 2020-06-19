@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net.Http;
+
 #pragma warning disable 1591
 
 namespace LightestNight.System.Api.Rest.Hypermedia
@@ -36,12 +36,12 @@ namespace LightestNight.System.Api.Rest.Hypermedia
         /// Creates a <see cref="LinkDefinition" /> and makes it available for access in <see cref="EntityLinkDefinitions" />
         /// </summary>
         /// <param name="action">The Controller action to map to</param>
-        /// <param name="valueExpression">An expression to retrieve the map of values that go into creating the resource link</param>
+        /// <param name="valueFunc">An expression to retrieve the map of values that go into creating the resource link</param>
         /// <param name="relation">The relation this link is to the current context</param>
         /// <param name="method">The <see cref="HttpMethod" /> this route accepts</param>
         /// <param name="rootForResource">Denotes whether this link is the root for the resource</param>
         /// <remarks>There can be only one root for a resource, so setting said property true will set all other link definitions to false</remarks>
-        protected void CreateLinkDefinition(string action, Expression<Func<object, object>> valueExpression,
+        protected void CreateLinkDefinition<TModel>(string action, Func<TModel, object> valueFunc,
             string relation, HttpMethod method, bool rootForResource = false)
         {
             if (!_entityLinkDefinitions.ContainsKey(_controllerType))
@@ -50,8 +50,8 @@ namespace LightestNight.System.Api.Rest.Hypermedia
             if (rootForResource)
                 foreach (var linkDef in _entityLinkDefinitions[_controllerType])
                     linkDef.IsRootForResource = false;
-            
-            _entityLinkDefinitions[_controllerType].Add(new LinkDefinition(action, relation, method, valueExpression, rootForResource));
+
+            _entityLinkDefinitions[_controllerType].Add(new LinkDefinition(action, relation, method, valueFunc.Downcast(), rootForResource));
         }
 
         /// <summary>
