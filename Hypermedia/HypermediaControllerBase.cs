@@ -34,7 +34,8 @@ namespace LightestNight.System.Api.Rest.Hypermedia
         public virtual CreatedResult Created(object value)
         {
             var controllerType = GetType();
-            var entityLinkDefs = LinkDefinitions.GetEntityLinkDefinitions(controllerType).ToArray();
+            var modelType = value.GetType();
+            var entityLinkDefs = LinkDefinitions.GetEntityLinkDefinitions(controllerType, modelType).ToArray();
             var rootForResource = entityLinkDefs.SingleOrDefault(link => link.IsRootForResource);
             if (rootForResource == null)
                 throw new InvalidOperationException("No link has been defined as root for this resource");
@@ -63,7 +64,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia
             if (!HttpContext.IsHateoas())
                 return base.Ok(value);
 
-            var entityLinkDefs = LinkDefinitions.GetEntityLinkDefinitions(GetType());
+            var entityLinkDefs = LinkDefinitions.GetEntityLinkDefinitions(GetType(), value.GetType());
             var links = entityLinkDefs.Select(linkDef =>
             {
                 var linkValues = linkDef.GetValueMap(value);
@@ -87,11 +88,12 @@ namespace LightestNight.System.Api.Rest.Hypermedia
             var shapedValues = _dataShaper.ShapeData(valueArray).ToArray();
             var shapedEntities = shapedValues.Select(entity => entity.Entity).ToArray();
             var controllerType = GetType();
+            var modelType = valueArray[0].GetType();
 
             for (var index = 0; index < shapedValues.Length; index++)
             {
                 var shapedValue = shapedValues[index];
-                var entityLinkDefs = LinkDefinitions.GetEntityLinkDefinitions(controllerType);
+                var entityLinkDefs = LinkDefinitions.GetEntityLinkDefinitions(controllerType, modelType);
                 var links = entityLinkDefs.Select(linkDef =>
                 {
                     var linkValues = linkDef.GetValueMap(shapedValue);
@@ -103,7 +105,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia
             }
 
             var wrapper = new LinkCollection<Entity>(shapedEntities);
-            var resourceLinkDefs = LinkDefinitions.GetResourceLinkDefinitions(controllerType).ToArray();
+            var resourceLinkDefs = LinkDefinitions.GetResourceLinkDefinitions(controllerType, modelType).ToArray();
             wrapper.Links.AddRange(resourceLinkDefs.Select(linkDef =>
                 new Link(LinkGenerator.GetUriByAction(HttpContext, linkDef.Action), linkDef.Relation, linkDef.Method)));
 

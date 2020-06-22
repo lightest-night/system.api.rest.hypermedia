@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 
@@ -10,13 +11,13 @@ namespace LightestNight.System.Api.Rest.Hypermedia
 {
     public static class LinkDefinitions
     {
-        private const BindingFlags PropertyBindingFlags = BindingFlags.Public | BindingFlags.Instance;
-
-        private static readonly IDictionary<Type, ICollection> EntityLinkDefinitions =
-            GetLinkDefinitions(nameof(ControllerMap<object>.EntityLinkDefinitions));
+        private static readonly IDictionary<Type, ReadOnlyDictionary<Type, ReadOnlyCollection<LinkDefinition>>>
+            EntityLinkDefinitions =
+                GetLinkDefinitions(nameof(ControllerMap<object, object>.EntityLinkDefinitions));
         
-        private static readonly IDictionary<Type, ICollection> ResourceLinkDefinitions =
-            GetLinkDefinitions(nameof(ControllerMap<object>.ResourceLinkDefinitions));
+        private static readonly IDictionary<Type, ReadOnlyDictionary<Type, ReadOnlyCollection<LinkDefinition>>>
+            ResourceLinkDefinitions =
+                GetLinkDefinitions(nameof(ControllerMap<object, object>.ResourceLinkDefinitions));
 
         private static IEnumerable<object> Maps
         {
@@ -28,74 +29,72 @@ namespace LightestNight.System.Api.Rest.Hypermedia
                     .Where(mapType =>
                         mapType.IsClass && !mapType.IsAbstract && mapType.BaseType != null &&
                         mapType.BaseType.IsGenericType &&
-                        mapType.BaseType.GetGenericTypeDefinition() == typeof(ControllerMap<>))
+                        mapType.BaseType.GetGenericTypeDefinition() == typeof(ControllerMap<,>))
                     .Select(Activator.CreateInstance)
                     .ToArray();
 
-                var maps = new List<object>();
                 foreach (var map in nullableMaps)
                 {
                     if (map == null)
                         continue;
 
-                    maps.Add(map);
+                    yield return map;
                 }
-
-                return maps;
             }
         }
 
-        public static IEnumerable<LinkDefinition> GetEntityLinkDefinitions(Type controllerType)
+        public static IEnumerable<LinkDefinition> GetEntityLinkDefinitions<TController, TModel>()
+            => GetEntityLinkDefinitions(typeof(TController), typeof(TModel));
+
+        public static IEnumerable<LinkDefinition> GetEntityLinkDefinitions(Type controllerType, Type modelType)
         {
-            var linkDefs = EntityLinkDefinitions[controllerType];
+            var linkDefs = EntityLinkDefinitions[controllerType][modelType];
             return GetLinkDefinitions(linkDefs);
         }
 
-        public static IEnumerable<LinkDefinition> GetResourceLinkDefinitions(Type controllerType)
+        public static IEnumerable<LinkDefinition> GetResourceLinkDefinitions<TController, TModel>()
+            => GetResourceLinkDefinitions(typeof(TController), typeof(TModel));
+        
+        public static IEnumerable<LinkDefinition> GetResourceLinkDefinitions(Type controllerType, Type modelType)
         {
-            var linkDefs = ResourceLinkDefinitions[controllerType];
+            var linkDefs = ResourceLinkDefinitions[controllerType][modelType];
             return GetLinkDefinitions(linkDefs);
         }
 
-        private static IEnumerable<LinkDefinition> GetLinkDefinitions(ICollection linkDefs)
+        private static IDictionary<Type, ReadOnlyDictionary<Type, ReadOnlyCollection<LinkDefinition>>> GetLinkDefinitions(string propertyName)
         {
-            var linkDefType = typeof(LinkDefinition);
-            var result = new List<LinkDefinition>();
+            var typedMap = Maps.ToDictionary(map => map.GetType().BaseType?.GenericTypeArguments[0]);
+            var result = new Dictionary<Type, ReadOnlyDictionary<Type, ReadOnlyCollection<LinkDefinition>>>();
 
-            foreach (var linkDefCollection in linkDefs)
+            foreach (var (key, value) in typedMap)
             {
-                if (!(linkDefCollection is IEnumerable linkDefEnumerable))
+                if (key == null)
+                    continue;
+                
+                var mapType = value.GetType();     // Instance of ControllerMap<,>
+                if (!(mapType.GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance)?.GetValue(value) is
+                    IDictionary modelTypedLinkDefinitions))
                     continue;
 
-                result.AddRange(linkDefEnumerable.Cast<object?>().Where(linkDef => linkDef != null && linkDef.GetType() == linkDefType).Cast<LinkDefinition>());
+                if (!(modelTypedLinkDefinitions.Values is IEnumerable linkDefinitions))
+                    continue;
+
+                foreach (var linkDefinition in linkDefinitions.Cast<ReadOnlyDictionary<Type, ReadOnlyCollection<LinkDefinition>>>()
+                    .Where(linkDefinition => linkDefinition != null))
+                    result.Add(key, linkDefinition);
             }
 
+            return result;
+        }
+
+        private static IEnumerable<LinkDefinition> GetLinkDefinitions(IEnumerable<LinkDefinition> linkDefs)
+        {
+            var result = new List<LinkDefinition>(linkDefs.Where(linkDef => linkDef != null));
             var rootForResource = result.FirstOrDefault(link => link.IsRootForResource) ?? result.FirstOrDefault(link =>
                 string.Equals(link.Action, Constants.DefaultRootForResourceAction,
                     StringComparison.InvariantCultureIgnoreCase));
             if (rootForResource != null && !rootForResource.IsRootForResource)
                 rootForResource.IsRootForResource = true;
-
-            return result;
-        }
-        
-        private static Dictionary<Type, ICollection> GetLinkDefinitions(string propertyName)
-        {
-            var controllerTypes = Maps.ToDictionary(map => map.GetType().BaseType?.GenericTypeArguments[0]);
-
-            var result = new Dictionary<Type, ICollection>();
-            foreach (var (key, value) in controllerTypes)
-            {
-                if (key == null)
-                    continue;
-
-                var mapType = value.GetType();
-                if (!(mapType.GetProperty(propertyName, PropertyBindingFlags)?.GetValue(value) is IDictionary
-                    linkDefinitions))
-                    continue;
-
-                result.Add(key, linkDefinitions.Values);
-            }
 
             return result;
         }

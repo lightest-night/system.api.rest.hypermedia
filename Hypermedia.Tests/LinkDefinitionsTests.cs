@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net.Http;
 using ExpectedObjects;
 using Shouldly;
@@ -12,37 +11,37 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
     
     public class LinkDefinitionsNoRootNoDefaultTestController {}
     
-    public class LinkDefinitionsTestControllerMap : ControllerMap<LinkDefinitionsTestController>
+    public class LinkDefinitionsTestControllerMap : ControllerMap<LinkDefinitionsTestController, TestReadModel>
     {
         public LinkDefinitionsTestControllerMap()
         {
             static object ValueFunc(TestReadModel readModel) => new {Property = readModel.StringProperty};
-            CreateLinkDefinition("GET", (Func<TestReadModel, object>) ValueFunc, "self", HttpMethod.Get);
-            CreateLinkDefinition("GetById", (Func<TestReadModel, object>) ValueFunc, "self", HttpMethod.Get, true);
+            CreateLinkDefinition("GET", ValueFunc, "self", HttpMethod.Get);
+            CreateLinkDefinition("GetById", ValueFunc, "self", HttpMethod.Get, true);
             
             CreateLinkDefinition("GetById", "self", HttpMethod.Get);
         }
     }
 
-    public class LinkDefinitionsNoRootTestControllerMap : ControllerMap<LinkDefinitionsNoRootTestController>
+    public class LinkDefinitionsNoRootTestControllerMap : ControllerMap<LinkDefinitionsNoRootTestController, TestReadModel>
     {
         public LinkDefinitionsNoRootTestControllerMap()
         {
             static object ValueFunc(TestReadModel readModel) => new {Property = readModel.StringProperty};
-            CreateLinkDefinition("GET", (Func<TestReadModel, object>) ValueFunc, "self", HttpMethod.Get);
-            CreateLinkDefinition("GetById", (Func<TestReadModel, object>) ValueFunc, "self", HttpMethod.Get);
+            CreateLinkDefinition("GET", ValueFunc, "self", HttpMethod.Get);
+            CreateLinkDefinition("GetById", ValueFunc, "self", HttpMethod.Get);
             
             CreateLinkDefinition("GetById", "self", HttpMethod.Get);
         }
     }
     
-    public class LinkDefinitionsNoRootNoDefaultTestControllerMap : ControllerMap<LinkDefinitionsNoRootNoDefaultTestController>
+    public class LinkDefinitionsNoRootNoDefaultTestControllerMap : ControllerMap<LinkDefinitionsNoRootNoDefaultTestController, TestReadModel>
     {
         public LinkDefinitionsNoRootNoDefaultTestControllerMap()
         {
             static object ValueFunc(TestReadModel readModel) => new {Property = readModel.StringProperty};
-            CreateLinkDefinition("GET", (Func<TestReadModel, object>) ValueFunc, "self", HttpMethod.Get);
-            CreateLinkDefinition("Create", (Func<TestReadModel, object>) ValueFunc, "self", HttpMethod.Post);
+            CreateLinkDefinition("GET", ValueFunc, "self", HttpMethod.Get);
+            CreateLinkDefinition("Create", ValueFunc, "self", HttpMethod.Post);
             
             CreateLinkDefinition("GetById", "self", HttpMethod.Get);
         }
@@ -59,7 +58,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
             var expectedValue = new {Property = _value.StringProperty}.ToExpectedObject();
             
             // Act
-            var result = LinkDefinitions.GetEntityLinkDefinitions(typeof(LinkDefinitionsTestController))
+            var result = LinkDefinitions.GetEntityLinkDefinitions(typeof(LinkDefinitionsTestController), typeof(TestReadModel))
                 .ToArray();
             
             // Assert
@@ -76,7 +75,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
             var expectedValue = new {Property = _value.StringProperty}.ToExpectedObject();
             
             // Act
-            var result = LinkDefinitions.GetEntityLinkDefinitions(typeof(LinkDefinitionsNoRootTestController))
+            var result = LinkDefinitions.GetEntityLinkDefinitions(typeof(LinkDefinitionsNoRootTestController), typeof(TestReadModel))
                 .ToArray();
             
             // Assert
@@ -95,7 +94,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
         public void ShouldGetNoRootEntityLinkDefinitions()
         {
             // Act
-            var result = LinkDefinitions.GetEntityLinkDefinitions(typeof(LinkDefinitionsNoRootNoDefaultTestController));
+            var result = LinkDefinitions.GetEntityLinkDefinitions(typeof(LinkDefinitionsNoRootNoDefaultTestController), typeof(TestReadModel));
             
             // Assert
             result.ShouldNotContain(linkDef => linkDef.IsRootForResource);
@@ -114,7 +113,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
             };
             
             // Act
-            var result = LinkDefinitions.GetEntityLinkDefinitions(typeof(LinkDefinitionsTestController))
+            var result = LinkDefinitions.GetEntityLinkDefinitions(typeof(LinkDefinitionsTestController), typeof(TestReadModel))
                 .ToArray();
             
             // Assert
@@ -134,7 +133,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
         public void ShouldGetResourceLinkDefinitions()
         {
             // Act
-            var result = LinkDefinitions.GetResourceLinkDefinitions(typeof(LinkDefinitionsTestController)).ToArray();
+            var result = LinkDefinitions.GetResourceLinkDefinitions(typeof(LinkDefinitionsTestController), typeof(TestReadModel)).ToArray();
 
             // Assert
             result.ShouldContain(linkDef => linkDef.Action == "GetById" && linkDef.Method == HttpMethod.Get && linkDef.Relation == "self");
