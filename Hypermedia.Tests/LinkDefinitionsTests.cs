@@ -23,6 +23,14 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
         }
     }
 
+    public class LinkDefinitionsTheOtherTestControllerMap : ControllerMap<LinkDefinitionsTestController, TestReadModelTheOther>
+    {
+        public LinkDefinitionsTheOtherTestControllerMap()
+        {
+            CreateLinkDefinition("GetById", readModel => new {Property = readModel.Property}, "self", HttpMethod.Get);
+        }
+    }
+
     public class LinkDefinitionsNoRootTestControllerMap : ControllerMap<LinkDefinitionsNoRootTestController, TestReadModel>
     {
         public LinkDefinitionsNoRootTestControllerMap()

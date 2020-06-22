@@ -66,7 +66,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia
             if (rootForResource)
                 foreach (var linkDef in _entityLinkDefinitions[_controllerType][_modelType])
                     linkDef.IsRootForResource = false;
-
+            
             _entityLinkDefinitions[_controllerType][_modelType]
                 .Add(new LinkDefinition(action, relation, method, valueFunc.Downcast(), rootForResource));
         }
