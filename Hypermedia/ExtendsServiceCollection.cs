@@ -25,9 +25,9 @@ namespace LightestNight.System.Api.Rest.Hypermedia
                 {
                     optionsAccessor?.Invoke(options);
                     options.Filters.Add(typeof(ValidateMediaTypeAttribute));
-                }).AddXmlSerializerFormatters()
-                .AddNewtonsoftJson(options =>
-                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver());
+                }).AddNewtonsoftJson(options =>
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver())
+                .AddXmlSerializerFormatters();
 
             return services.AddOutputFormatters(vendorName);
         }
