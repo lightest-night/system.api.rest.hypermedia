@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,9 +18,11 @@ namespace LightestNight.System.Api.Rest.Hypermedia
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection" /> to register into</param>
         /// <param name="vendorName">The custom vendor name to accept</param>
+        /// <param name="includeFluentValidation">Whether or not to add Fluent Validation to the Mvc Pipeline</param>
         /// <param name="optionsAccessor">An action to generate an <see cref="MvcOptions" /> object to configure Mvc with</param>
         /// <returns>A populated <see cref="IServiceCollection" /></returns>
-        public static IServiceCollection AddHypermedia(this IServiceCollection services, string vendorName, Action<MvcOptions>? optionsAccessor = null)
+        public static IServiceCollection AddHypermedia(this IServiceCollection services, string vendorName,
+            bool includeFluentValidation = true, Action<MvcOptions>? optionsAccessor = null)
         {
             services.AddControllers(options =>
                 {
@@ -27,7 +30,8 @@ namespace LightestNight.System.Api.Rest.Hypermedia
                     options.Filters.Add(typeof(ValidateMediaTypeAttribute));
                 }).AddNewtonsoftJson(options =>
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver())
-                .AddXmlSerializerFormatters();
+                .AddXmlSerializerFormatters()
+                .AddFluentValidation();
 
             return services.AddOutputFormatters(vendorName);
         }
