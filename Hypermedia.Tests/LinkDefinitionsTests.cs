@@ -146,5 +146,15 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
             // Assert
             result.ShouldContain(linkDef => linkDef.Action == "GetById" && linkDef.Method == HttpMethod.Get && linkDef.Relation == "self");
         }
+
+        [Fact]
+        public void ShouldGetRootResourceLinkDefinitions()
+        {
+            // Act
+            var result = LinkDefinitions.GetRootResourceLinkDefinitions();
+            
+            // Assert
+            result.ShouldContain(linkDef => linkDef.Action == Constants.DefaultRootForResourceAction || linkDef.IsRootForResource);
+        }
     }
 }

@@ -25,11 +25,6 @@ namespace LightestNight.System.Api.Rest.Hypermedia
         /// </summary>
         public HttpMethod Method { get; }
         
-        // /// <summary>
-        // /// An expression to retrieve the map of values that go into creating the resource link
-        // /// </summary>
-        // public Expression<Func<object, object>> ValueExpression { get; }
-        
         /// <summary>
         /// Denotes whether this link is the root for the resource
         /// </summary>
