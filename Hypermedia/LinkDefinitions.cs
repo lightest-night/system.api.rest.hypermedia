@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net.Http;
 using System.Reflection;
 
 #pragma warning disable 1591
@@ -63,20 +62,20 @@ namespace LightestNight.System.Api.Rest.Hypermedia
             return GetLinkDefinitions(linkDefs);
         }
 
-        public static IEnumerable<LinkDefinition> GetRootResourceLinkDefinitions()
+        public static IEnumerable<LinkDefinition> GetRootEntityLinkDefinitions()
         {
             var linkDefs = new Dictionary<Type, LinkDefinition>();
-            foreach (var resourceLinkDefinition in ResourceLinkDefinitions)
+            foreach (var resourceLinkDefinition in EntityLinkDefinitions)
             foreach (var (key, value) in resourceLinkDefinition.Value)
             {
                 if (linkDefs.ContainsKey(key))
                     continue;
 
-                linkDefs.Add(key,
-                    value.First(linkDefinition =>
-                        linkDefinition.IsRootForResource || !linkDefinition.IsRootForResource &&
-                        linkDefinition.Action == Constants.DefaultRootForResourceAction &&
-                        linkDefinition.Method == HttpMethod.Get));
+                var root = value.FirstOrDefault(linkDefinition => linkDefinition.IsRootForEntity);
+                if (root == default)
+                    continue;
+
+                linkDefs.Add(key, root);
             }
 
             return GetLinkDefinitions(linkDefs.Values);

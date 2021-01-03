@@ -32,18 +32,26 @@ namespace LightestNight.System.Api.Rest.Hypermedia
         public bool IsRootForResource { get; set; }
         
         /// <summary>
+        /// Denotes whether this link is the root for the entity, and will be within the root list
+        /// </summary>
+        public bool IsRootForEntity { get; set; }
+
+        /// <summary>
         /// Creates an instance of <see cref="LinkDefinition" />
         /// </summary>
         /// <param name="action">The Controller action to map to</param>
         /// <param name="relation">The relation this link is to the current context</param>
         /// <param name="method">The <see cref="HttpMethod" /> this route accepts</param>
         /// <param name="valueFunc">A function to retrieve the map of values that go into creating the resource link</param>
-        /// <param name="rootForResource"></param>
-        public LinkDefinition(string action, string relation, HttpMethod method, Func<object, object> valueFunc, bool rootForResource = false)
+        /// <param name="rootForEntity">Denotes whether this is the root for the entity</param>
+        /// <param name="rootForResource">Denotes whether this is the root for the resource</param>
+        public LinkDefinition(string action, string relation, HttpMethod method, Func<object, object> valueFunc,
+            bool rootForEntity = false, bool rootForResource = false)
         {
             Action = action.ThrowIfNull(nameof(action));
             Relation = relation.ThrowIfNull(nameof(relation));
             Method = method.ThrowIfNull(nameof(method));
+            IsRootForEntity = rootForEntity;
             IsRootForResource = rootForResource;
 
             _valueFunction = valueFunc.ThrowIfNull(nameof(valueFunc));

@@ -17,7 +17,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
         {
             static object ValueFunc(TestReadModel readModel) => new {Property = readModel.StringProperty};
             CreateLinkDefinition("GET", ValueFunc, "self", HttpMethod.Get);
-            CreateLinkDefinition("GetById", ValueFunc, "self", HttpMethod.Get, true);
+            CreateLinkDefinition("GetById", ValueFunc, "self", HttpMethod.Get, true, true);
             
             CreateLinkDefinition("GetById", "self", HttpMethod.Get);
         }
@@ -148,13 +148,13 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
         }
 
         [Fact]
-        public void ShouldGetRootResourceLinkDefinitions()
+        public void ShouldGetRootEntityLinkDefinitions()
         {
             // Act
-            var result = LinkDefinitions.GetRootResourceLinkDefinitions();
+            var result = LinkDefinitions.GetRootEntityLinkDefinitions();
             
             // Assert
-            result.ShouldContain(linkDef => linkDef.Action == Constants.DefaultRootForResourceAction || linkDef.IsRootForResource);
+            result.ShouldContain(linkDef => linkDef.IsRootForEntity);
         }
     }
 }
