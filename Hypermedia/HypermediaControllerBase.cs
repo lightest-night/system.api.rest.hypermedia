@@ -31,19 +31,6 @@ namespace LightestNight.System.Api.Rest.Hypermedia
         }
 
         [NonAction]
-        public OkObjectResult Roots()
-        {
-            var rootLinkDefs = LinkDefinitions.GetRootEntityLinkDefinitions();
-            var rootLinks = rootLinkDefs.Select(linkDef =>
-                new Link(LinkGenerator.GetUriByAction(HttpContext, linkDef.Action), linkDef.Relation, linkDef.Method));
-
-            return Ok(new
-            {
-                Links = rootLinks
-            });
-        }
-
-        [NonAction]
         public virtual CreatedResult Created(object value)
         {
             var controllerType = GetType();
