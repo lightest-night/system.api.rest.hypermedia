@@ -15,8 +15,8 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
             {
                 static object ValueFunc(TestReadModel readModel) => new {Property = readModel.StringProperty};
                 CreateLinkDefinition("GET", ValueFunc, "self", HttpMethod.Get);
-                CreateLinkDefinition("GetById", ValueFunc, "self", HttpMethod.Get, true);
-                CreateLinkDefinition("GetByIdAgain", ValueFunc, "self", HttpMethod.Get, true);
+                CreateLinkDefinition("GetById", ValueFunc, "self", HttpMethod.Get, true, true);
+                CreateLinkDefinition("GetByIdAgain", ValueFunc, "self", HttpMethod.Get, true, true);
 
                 CreateLinkDefinition("GetById", "self", HttpMethod.Get);
             }
@@ -41,11 +41,22 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
         }
 
         [Fact]
-        public void ShouldCreateEntityLinkDefinitionsWithOnlyOneRoot()
+        public void ShouldCreateEntityLinkDefinitionsWithOnlyOneResourceRoot()
         {
             // Act
             var controllerLinkDefinitions = _sut.EntityLinkDefinitions[typeof(TestController)][typeof(TestReadModel)];
             var rootDefinitions = controllerLinkDefinitions.Where(linkDef => linkDef.IsRootForResource).ToArray();
+            
+            // Assert
+            rootDefinitions.Length.ShouldBe(1);
+        }
+        
+        [Fact]
+        public void ShouldCreateEntityLinkDefinitionsWithOnlyOneEntityRoot()
+        {
+            // Act
+            var controllerLinkDefinitions = _sut.EntityLinkDefinitions[typeof(TestController)][typeof(TestReadModel)];
+            var rootDefinitions = controllerLinkDefinitions.Where(linkDef => linkDef.IsRootForEntity).ToArray();
             
             // Assert
             rootDefinitions.Length.ShouldBe(1);

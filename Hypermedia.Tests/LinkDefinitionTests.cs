@@ -33,7 +33,22 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        public void ShouldCreateLinkDefinitionValueExpressionWithRoot(bool isRoot)
+        public void ShouldCreateLinkDefinitionValueExpressionWithRootForResource(bool isRoot)
+        {
+            // Act
+            var result = new LinkDefinition(Action, Relation, _method, ValueAccessor, rootForResource: isRoot);
+            
+            // Assert
+            result.Action.ShouldBe(Action);
+            result.Relation.ShouldBe(Relation);
+            result.Method.ShouldBe(_method);
+            result.IsRootForResource.ShouldBe(isRoot);
+        }
+        
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ShouldCreateLinkDefinitionValueExpressionWithRootForEntity(bool isRoot)
         {
             // Act
             var result = new LinkDefinition(Action, Relation, _method, ValueAccessor, isRoot);
@@ -42,7 +57,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests
             result.Action.ShouldBe(Action);
             result.Relation.ShouldBe(Relation);
             result.Method.ShouldBe(_method);
-            result.IsRootForResource.ShouldBe(isRoot);
+            result.IsRootForEntity.ShouldBe(isRoot);
         }
 
         [Fact]
