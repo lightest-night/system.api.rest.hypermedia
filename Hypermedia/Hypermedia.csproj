@@ -33,6 +33,7 @@
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
       <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
       <DocumentationFile>bin\Release\Hypermedia.xml</DocumentationFile>
+      <NoWarn>1701;1702;CS1591</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
