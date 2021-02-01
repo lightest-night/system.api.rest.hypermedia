@@ -1,7 +1,4 @@
 ﻿using System.Net.Http;
-using LightestNight.System.Utilities.Extensions;
-
-#pragma warning disable 1591
 
 namespace LightestNight.System.Api.Rest.Hypermedia
 {
@@ -40,9 +37,9 @@ namespace LightestNight.System.Api.Rest.Hypermedia
         /// <param name="method">The HTTP Method the current context accepts</param>
         public Link(string href, string relation, HttpMethod method)
         {
-            Href = href.ThrowIfNull(nameof(href)).ToLowerInvariant();
-            Rel = relation.ThrowIfNull(nameof(relation)).ToLowerInvariant();
-            Method = method.ThrowIfNull(nameof(method)).ToString().ToUpperInvariant();
+            Href = href.ToLowerInvariant();
+            Rel = relation.ToLowerInvariant();
+            Method = method.ToString().ToUpperInvariant();
         }
 
     }

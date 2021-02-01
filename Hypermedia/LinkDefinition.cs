@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Net.Http;
-using LightestNight.System.Utilities.Extensions;
-
-#pragma warning disable 1591
 
 namespace LightestNight.System.Api.Rest.Hypermedia
 {
@@ -48,13 +45,13 @@ namespace LightestNight.System.Api.Rest.Hypermedia
         public LinkDefinition(string action, string relation, HttpMethod method, Func<object, object> valueFunc,
             bool rootForEntity = false, bool rootForResource = false)
         {
-            Action = action.ThrowIfNull(nameof(action));
-            Relation = relation.ThrowIfNull(nameof(relation));
-            Method = method.ThrowIfNull(nameof(method));
+            Action = action;
+            Relation = relation;
+            Method = method;
             IsRootForEntity = rootForEntity;
             IsRootForResource = rootForResource;
 
-            _valueFunction = valueFunc.ThrowIfNull(nameof(valueFunc));
+            _valueFunction = valueFunc;
         }
 
         /// <summary>

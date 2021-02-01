@@ -1,10 +1,7 @@
 ﻿using System.Linq;
-using LightestNight.System.Utilities.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Net.Http.Headers;
-
-#pragma warning disable 1591
 
 namespace LightestNight.System.Api.Rest.Hypermedia
 {
@@ -12,8 +9,6 @@ namespace LightestNight.System.Api.Rest.Hypermedia
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            context.ThrowIfNull(nameof(context));
-
             var mediaType = context.HttpContext.Request.Headers.ContainsKey(HeaderNames.Accept)
                 ? context.HttpContext.Request.Headers[HeaderNames.Accept].FirstOrDefault()
                 : Constants.JsonMediaType;

@@ -83,8 +83,8 @@ namespace LightestNight.System.Api.Rest.Hypermedia
 
         private static IDictionary<Type, IDictionary<Type, ImmutableArray<LinkDefinition>>> GetLinkDefinitions(string propertyName)
         {
-            var typedMap = Maps.GroupBy(map => map.GetType().BaseType?.GenericTypeArguments[0])
-                .ToDictionary(grp => grp.Key);
+            var typedMap = Maps.Where(map => map.GetType().BaseType != null)
+                .GroupBy(map => map.GetType().BaseType!.GenericTypeArguments[0]).ToDictionary(grp => grp.Key);
             var result = new Dictionary<Type, IDictionary<Type, ImmutableArray<LinkDefinition>>>();
 
             foreach (var (key, grouping) in typedMap)
@@ -121,7 +121,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia
 
         private static IEnumerable<LinkDefinition> GetLinkDefinitions(IEnumerable<LinkDefinition> linkDefs)
         {
-            var result = new List<LinkDefinition>(linkDefs.Where(linkDef => linkDef != null));
+            var result = new List<LinkDefinition>(linkDefs);
             var rootForResource = result.FirstOrDefault(link => link.IsRootForResource) ?? result.FirstOrDefault(link =>
                 string.Equals(link.Action, Constants.DefaultRootForResourceAction,
                     StringComparison.InvariantCultureIgnoreCase));

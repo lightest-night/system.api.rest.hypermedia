@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using LightestNight.System.Utilities.Extensions;
-#pragma warning disable 1591
 
 namespace LightestNight.System.Api.Rest.Hypermedia.Data
 {
@@ -19,9 +18,6 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Data
         /// <returns>An instance of <see cref="ShapedEntity" /></returns>
         public ShapedEntity ShapeData(object entity, params string[] requestedFields)
         {
-            if (entity == null)
-                return new ShapedEntity();
-
             PopulateProperties(entity.GetType());
             var requestedProperties = GetRequestedProperties(requestedFields);
             return FetchData(entity, requestedProperties);
@@ -57,7 +53,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Data
             return requestedFields
                 .Select(field => _properties.FirstOrDefault(property =>
                     property.Name.Equals(field.Trim(), StringComparison.InvariantCultureIgnoreCase)))
-                .Where(property => property != null);
+                .Where(property => property != null)!;
         }
 
         private static ShapedEntity FetchData(object entity, IEnumerable<PropertyInfo> requestedProperties)

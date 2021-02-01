@@ -15,19 +15,6 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests.Data
         }
 
         [Fact]
-        public void ShouldReturnAnEmptyShapedEntityIfNullGiven()
-        {
-            // Arrange
-            var value = (object?) null;
-            
-            // Act
-            var result = _sut.ShapeData(value!);
-            
-            // Assert
-            result.Entity.Count.ShouldBe(0);
-        }
-    
-        [Fact]
         public void ShouldShapeObjectIntoEntity()
         {
             // Arrange
@@ -102,7 +89,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests.Data
             foreach (var result in results)
             {
                 var testObject = testObjects.FirstOrDefault(to =>
-                    to.IntProperty == (int) result.Entity[nameof(TestReadModel.IntProperty)]);
+                    to.IntProperty == (int) result.Entity[nameof(TestReadModel.IntProperty)]!);
                 testObject.ShouldNotBeNull();
                 
                 result.Entity[nameof(TestReadModel.StringProperty)].ShouldBe(testObject.StringProperty);
@@ -130,7 +117,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests.Data
             {
                 result.Entity.ContainsKey(nameof(TestReadModel.StringProperty)).ShouldBeTrue();
                 var testObject = testObjects.FirstOrDefault(to =>
-                    to.StringProperty == result.Entity[nameof(TestReadModel.StringProperty)].ToString());
+                    to.StringProperty == result.Entity[nameof(TestReadModel.StringProperty)]!.ToString());
                 testObject.ShouldNotBeNull();
                 
                 result.Entity[nameof(TestReadModel.BoolProperty)].ShouldBe(testObject.BoolProperty);
@@ -138,29 +125,5 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Tests.Data
                 result.Entity.ContainsKey(nameof(TestReadModel.IntProperty)).ShouldBeFalse();
             }
         }
-        
-        
-        // public void ShouldOnlyIncludeRequestedFields()
-        // {
-        //     // Arrange
-        //     var testObject = new TestReadModel
-        //     {
-        //         StringProperty = "Test Property",
-        //         IntProperty = 100,
-        //         BoolProperty = true
-        //     };
-        //     var requestedFields = new[] {nameof(TestReadModel.StringProperty), nameof(TestReadModel.BoolProperty)};
-        //
-        //     // Act
-        //     var result = _sut.ShapeData(testObject, requestedFields);
-        //     
-        //     // Assert
-        //     result.Entity.ContainsKey(nameof(TestReadModel.StringProperty)).ShouldBeTrue();
-        //     result.Entity[nameof(TestReadModel.StringProperty)].ShouldBe(testObject.StringProperty);
-        //     
-        //     result.Entity.ContainsKey(nameof(TestReadModel.IntProperty)).ShouldBeFalse();
-        //     
-        //     result.Entity[nameof(TestReadModel.BoolProperty)].ShouldBe(testObject.BoolProperty);
-        // }
     }
 }

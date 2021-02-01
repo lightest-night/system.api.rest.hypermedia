@@ -12,9 +12,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hypermedia.Tests", "Hyperme
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{7B6A5D2C-C15A-4BAE-AA8D-1DB85ED79B2E}"
 ProjectSection(SolutionItems) = preProject
+	GitVersion.yml = GitVersion.yml
 	.github\workflows\CI.yml = .github\workflows\CI.yml
 	.github\workflows\Release.yml = .github\workflows\Release.yml
-	GitVersion.yml = GitVersion.yml
 EndProjectSection
 EndProject
 Global

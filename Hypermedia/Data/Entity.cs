@@ -6,26 +6,24 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using LightestNight.System.Utilities.Extensions;
-#pragma warning disable 1591
 
 namespace LightestNight.System.Api.Rest.Hypermedia.Data
 {
-    public class Entity : DynamicObject, IXmlSerializable, IDictionary<string, object>
+    public class Entity : DynamicObject, IXmlSerializable, IDictionary<string, object?>
     {
-        private readonly IDictionary<string, object> _expando;
+        private readonly IDictionary<string, object?> _expando;
 
         public int Count => _expando.Count;
         public bool IsReadOnly => _expando.IsReadOnly;
         
-        public object this[string key]
+        public object? this[string key]
         {
             get => _expando[key];
             set => _expando[key] = value;
         }
 
         public ICollection<string> Keys => _expando.Keys;
-        public ICollection<object> Values => _expando.Values;
+        public ICollection<object?> Values => _expando.Values;
 
         public Entity()
         {
@@ -35,10 +33,10 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Data
         IEnumerator IEnumerable.GetEnumerator()
             => GetEnumerator();
         
-        public bool Contains(KeyValuePair<string, object> item)
+        public bool Contains(KeyValuePair<string, object?> item)
             => _expando.Contains(item);
         
-        public bool Remove(KeyValuePair<string, object> item)
+        public bool Remove(KeyValuePair<string, object?> item)
             => _expando.Remove(item);
         
         public bool ContainsKey(string key)
@@ -53,13 +51,11 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Data
         public bool TryGetValue(string key, out object value)
             => _expando.TryGetValue(key, out value!);
         
-        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, object?>> GetEnumerator()
             => _expando.GetEnumerator();
 
-        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        public override bool TryGetMember(GetMemberBinder binder, out object? result)
         {
-            binder.ThrowIfNull(nameof(binder));
-            
             if (!_expando.TryGetValue(binder.Name, out var value)) 
                 return base.TryGetMember(binder, out result);
             
@@ -67,10 +63,8 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Data
             return true;
         }
 
-        public override bool TrySetMember(SetMemberBinder binder, object value)
+        public override bool TrySetMember(SetMemberBinder binder, object? value)
         {
-            binder.ThrowIfNull(nameof(binder));
-            
             _expando[binder.Name] = value;
             return true;
         }
@@ -94,7 +88,7 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Data
             }
         }
 
-        public void Add(KeyValuePair<string, object> item)
+        public void Add(KeyValuePair<string, object?> item)
         {
             _expando.Add(item);
         }
@@ -104,17 +98,17 @@ namespace LightestNight.System.Api.Rest.Hypermedia.Data
             _expando.Clear();
         }
 
-        public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
+        public void CopyTo(KeyValuePair<string, object?>[] array, int arrayIndex)
         {
             _expando.CopyTo(array, arrayIndex);
         }
 
-        public void Add(string key, object value)
+        public void Add(string key, object? value)
         {
             _expando.Add(key, value);
         }
 
-        private static void WriteXmlElement(string key, object value, XmlWriter writer)
+        private static void WriteXmlElement(string key, object? value, XmlWriter writer)
         {
             if (value == null)
                 return;

@@ -2,18 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using LightestNight.System.Api.Rest.Hypermedia.Data;
-using LightestNight.System.Utilities.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-
-#pragma warning disable 1591
 
 namespace LightestNight.System.Api.Rest.Hypermedia
 {
     public class HypermediaControllerBase : ControllerBase
     {
-        private readonly DataShaper _dataShaper = new DataShaper();
+        private readonly DataShaper _dataShaper = new();
         private LinkGenerator? _linkGenerator;
 
         private LinkGenerator LinkGenerator
@@ -23,8 +20,8 @@ namespace LightestNight.System.Api.Rest.Hypermedia
                 if (_linkGenerator != null)
                     return _linkGenerator;
 
-                var linkGenerator = HttpContext?.RequestServices?.GetRequiredService<LinkGenerator>();
-                _linkGenerator = linkGenerator.ThrowIfNull(nameof(linkGenerator));
+                var linkGenerator = HttpContext?.RequestServices.GetRequiredService<LinkGenerator>();
+                _linkGenerator = linkGenerator ?? throw new ArgumentNullException(nameof(linkGenerator));
 
                 return _linkGenerator!;
             }
